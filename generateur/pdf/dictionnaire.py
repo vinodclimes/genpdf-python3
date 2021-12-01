@@ -18,19 +18,19 @@ class DictionnairePDF:
     def __init__(self):
         self.cles_valeurs = {}
 
-    def ajouter(self, nom_pdf, element_pdf):
+    def ajouter(self, nom_pdf, octets):
         cle = nom_pdf.lire_octets()
-        self.cles_valeurs[cle] = (nom_pdf, element_pdf)
+        self.cles_valeurs[cle] = (nom_pdf, octets)
 
     def lire_octets(self):
         lignes = []
         lignes.append(self.PREFIXE)
 
         for cle in self.cles_valeurs:
-            (nom_pdf, element_pdf) = self.cles_valeurs[cle]
+            (nom_pdf, octets) = self.cles_valeurs[cle]
             ligne = nom_pdf.lire_octets()
             ligne += self.SEPARATEUR
-            ligne += element_pdf.lire_octets()
+            ligne += octets
             lignes.append(ligne)
 
         lignes.append(self.SUFFIXE)

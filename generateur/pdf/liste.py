@@ -1,5 +1,9 @@
 class ListePDF:
 
+    # Exemple : une liste avec 4 éléments de types différents.
+    #
+    #     [1 2.3 txt /Catalog]
+
     PREFIXE = b"["
     SEPARATEUR = b" "
     SUFFIXE = b"]"
