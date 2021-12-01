@@ -1,5 +1,5 @@
 FIN_LIGNE = b"\n"
 
 
-def en_octets(objet):
-    return bytes(str(objet), "ascii")
+def en_octets(valeur):
+    return bytes(str(valeur), "ascii")
