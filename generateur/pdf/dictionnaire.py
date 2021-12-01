@@ -3,6 +3,14 @@ from .ligne import LignePDF
 
 class DictionnairePDF:
 
+    # Exemple : un dictionnaire avec 3 entrées (Type, Size, Info).
+    #
+    #     <<
+    #     /Type /Catalog
+    #     /Size 88
+    #     /Info 87 0 R
+    #     >>
+
     PREFIXE = b"<<"
     SUFFIXE = b">>"
     SEPARATEUR = b" "

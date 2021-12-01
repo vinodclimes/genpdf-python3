@@ -4,6 +4,21 @@ from .ligne import LignePDF
 
 class FermeturePDF:
 
+    # Un fichier PDF se termine par 3 sections :
+    # - un dictionnaire final dans la section "trailer"
+    # - la position de la table des références dans la section "startxref"
+    # - un marqueur de fin de fichier
+    #
+    # Exemple :
+    #
+    #     trailer
+    #     <<
+    #     ...
+    #     >>
+    #     startxref
+    #     123
+    #     %%EOF
+
     MARQUEUR_TRAILER = b"trailer"
     MARQUEUR_STARTXREF = b"startxref"
     MARQUEUR_EOF = b"%%EOF"

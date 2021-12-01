@@ -3,7 +3,10 @@ from .assistant import en_octets
 
 class NomPDF:
 
-    # Exemple : /MediaBox
+    # Exemple : le nom "MediaBox"
+    #
+    #     /MediaBox
+    #
     # Les noms commencent par une barre oblique.
 
     PREFIXE = b"/"

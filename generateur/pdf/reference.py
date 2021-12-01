@@ -3,8 +3,9 @@ from .assistant import en_octets
 
 class ReferenceObjetPDF:
 
-    # Exemple : 42 0 R
-    # Est une référence vers l'objet n°42 en version 0.
+    # Exemple : une référence vers l'objet n°42 en version 0.
+    #
+    #     42 0 R
 
     SEPARATEUR = b" "
     MARQUEUR_REFERENCE = b"R"

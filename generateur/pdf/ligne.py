@@ -3,6 +3,9 @@ from .assistant import FIN_LIGNE
 
 class LignePDF:
 
+    # Les lignes sont limitées en longueur,
+    # et se terminent par un marqueur de fin de ligne.
+
     LONGEUR_MAX = 255
 
     @classmethod
