@@ -54,9 +54,11 @@ class TableReferencesPDF:
     def lire_octets(self):
         taille = 1 + len(self.references)
 
+        deuxieme_ligne = b"0" + self.SEPARATEUR + en_octets(taille)
+
         octets = b""
         octets += LignePDF(self.MARQUEUR_XREF).lire_octets()
-        octets += b"0" + self.SEPARATEUR + en_octets(taille) + FIN_LIGNE
+        octets += LignePDF(deuxieme_ligne).lire_octets()
         octets += LignePDF(self.finaliser_entree(self.ENTREE_0)).lire_octets()
 
         for position in self.references:
