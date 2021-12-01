@@ -1,4 +1,4 @@
-from .assistant import lire_octets
+from .assistant import en_octets
 
 
 class ReferenceObjetPDF:
@@ -14,8 +14,8 @@ class ReferenceObjetPDF:
         self.version = version
 
     def lire_octets(self):
-        return (lire_octets(self.numero)
+        return (en_octets(self.numero)
                 + self.SEPARATEUR
-                + lire_octets(self.version)
+                + en_octets(self.version)
                 + self.SEPARATEUR
                 + self.MARQUEUR_REFERENCE)

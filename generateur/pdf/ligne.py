@@ -1,12 +1,14 @@
+from .assistant import FIN_LIGNE
+
+
 class LignePDF:
 
-    FIN_LIGNE = b"\n"
     LONGEUR_MAX = 255
 
     @classmethod
     def decouper_en_morceaux(cls, octets):
         morceaux = []
-        longueur_disponible = cls.LONGEUR_MAX - len(cls.FIN_LIGNE)
+        longueur_disponible = cls.LONGEUR_MAX - len(FIN_LIGNE)
 
         morceaux_complets = len(octets) // longueur_disponible
         for index_ligne in range(morceaux_complets):
@@ -28,5 +30,5 @@ class LignePDF:
         octets = b""
         for morceau in self.morceaux:
             octets += morceau
-            octets += self.FIN_LIGNE
+            octets += FIN_LIGNE
         return octets

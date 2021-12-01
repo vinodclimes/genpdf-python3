@@ -1,4 +1,4 @@
-from .assistant import lire_octets
+from .assistant import en_octets
 
 
 class NomPDF:
@@ -12,4 +12,4 @@ class NomPDF:
         self.nom = nom
 
     def lire_octets(self):
-        return self.PREFIXE + lire_octets(self.nom)
+        return self.PREFIXE + en_octets(self.nom)
