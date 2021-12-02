@@ -1,11 +1,10 @@
-from .ligne import LignePDF
+from .composant import ComposantPDF
 
 
-class OuverturePDF:
+class OuverturePDF(ComposantPDF):
+    """Un fichier PDF commence par un indicateur de version. """
 
-    # Un fichier PDF commence par un indicateur de version.
+    INDICATEUR_VERSION = "%PDF-1.4"
 
-    MARQUEUR_VERSION = b"%PDF-1.4"
-
-    def lire_octets(self):
-        return LignePDF(self.MARQUEUR_VERSION).lire_octets()
+    def __init__(self):
+        super().__init__(self.INDICATEUR_VERSION)

@@ -1,18 +1,12 @@
-from .assistant import en_octets
+from .composant import ComposantPDF
 
 
-class NomPDF:
+class NomPDF(ComposantPDF):
+    """Un nom PDF est un texte précédé d'une barre oblique. """
 
-    # Exemple : le nom "MediaBox"
-    #
-    #     /MediaBox
-    #
-    # Les noms commencent par une barre oblique.
-
-    PREFIXE = b"/"
+    PREFIXE = "/"
 
     def __init__(self, nom):
-        self.nom = nom
-
-    def lire_octets(self):
-        return self.PREFIXE + en_octets(self.nom)
+        super().__init__()
+        self.inserer(self.PREFIXE)
+        self.inserer(nom)

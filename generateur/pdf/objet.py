@@ -1,36 +1,34 @@
-from .assistant import FIN_LIGNE, en_octets
-from .ligne import LignePDF
+from .composant import ComposantPDF
+from .document import DocumentPDF
 
 
-class ObjetPDF:
+class ObjetPDF(ComposantPDF):
+    """Un objet interne, référençable dans la structure d'un document PDF.
 
-    # Un objet PDF possède un numéro, une version, et un contenu
-    # placé entre deux marqueurs : "obj" et "endobj".
-    #
-    # Exemple : objet n°1 version 0
-    #
-    #     1 0 obj
-    #     ... contenu ...
-    #     endobj
+    Un objet PDF possède un numéro, une version, et un contenu
+    placé entre deux marqueurs : "obj" et "endobj".
 
-    SEPARATEUR = b" "
-    PREFIXE = b"obj"
-    SUFFIXE = b"endobj"
+    #Exemple : objet n°1 version 0
+
+         1 0 obj
+         ... contenu ...
+         endobj
+
+    """
+
+    SEPARATEUR_SEQUENCE_DEMARRAGE = b" "
+    OUVERTURE = "obj"
+    FERMETURE = "endobj"
 
     def __init__(self, numero, contenu=None, version=0):
-        self.numero = numero
-        self.version = version
-        self.contenu = contenu
-
-    def lire_octets(self):
-        premiere_ligne = (en_octets(self.numero)
-                          + self.SEPARATEUR
-                          + en_octets(self.version)
-                          + self.SEPARATEUR
-                          + self.PREFIXE)
-        octets = b""
-        octets += LignePDF(premiere_ligne).lire_octets()
-        octets += self.contenu.lire_octets()
-        octets += FIN_LIGNE
-        octets += LignePDF(self.SUFFIXE).lire_octets()
-        return octets
+        super().__init__(separateur=DocumentPDF.SAUT_LIGNE)
+        self.numero_objet = numero
+        composant_interne_sequence = (
+            ComposantPDF(separateur=self.SEPARATEUR_SEQUENCE_DEMARRAGE))
+        composant_interne_sequence.inserer(numero)
+        composant_interne_sequence.inserer(version)
+        composant_interne_sequence.inserer(self.OUVERTURE)
+        self.inserer(composant_interne_sequence)
+        if contenu is not None:
+            self.inserer(contenu)
+        self.inserer(self.FERMETURE)

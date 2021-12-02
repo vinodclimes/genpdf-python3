@@ -1,37 +1,60 @@
-from .assistant import FIN_LIGNE, en_octets
-from .ligne import LignePDF
+from .composant import ComposantPDF
+from .document import DocumentPDF
+from .dictionnaire import DictionnairePDF
+from .nom import NomPDF
 
 
-class FermeturePDF:
+class FermeturePDF(ComposantPDF):
+    """Un fichier PDF se termine par une séquence spécifique.
 
-    # Un fichier PDF se termine par 3 sections :
-    # - un dictionnaire final dans la section "trailer"
-    # - la position de la table des références dans la section "startxref"
-    # - un marqueur de fin de fichier
-    #
-    # Exemple :
-    #
-    #     trailer
-    #     <<
-    #     ...
-    #     >>
-    #     startxref
-    #     123
-    #     %%EOF
+    Cette séquence est constituée de 3 sections :
+    - un dictionnaire final dans la section "trailer"
+    - la position de la table des références dans la section "startxref"
+    - un marqueur de fin de fichier
 
-    MARQUEUR_TRAILER = b"trailer"
-    MARQUEUR_STARTXREF = b"startxref"
-    MARQUEUR_EOF = b"%%EOF"
+    Exemple :
 
-    def __init__(self, table_references, dictionnaire_fermeture):
-        self.table = table_references
-        self.dictionnaire = dictionnaire_fermeture
+        trailer
+        <<
+        ...
+        >>
+        startxref
+        123
+        %%EOF
 
-    def lire_octets(self):
-        octets = b""
-        octets += LignePDF(self.MARQUEUR_TRAILER).lire_octets()
-        octets += self.dictionnaire.lire_octets()
-        octets += LignePDF(self.MARQUEUR_STARTXREF).lire_octets()
-        octets += LignePDF(en_octets(self.table.position)).lire_octets()
-        octets += LignePDF(self.MARQUEUR_EOF).lire_octets()
-        return octets
+    """
+
+    OUVERTURE_TRAILER = "trailer"
+    OUVERTURE_STARTXREF = "startxref"
+    FERMETURE_FICHIER = "%%EOF"
+
+    def __init__(self, taille_table, position_table, reference_catalogue):
+        super().__init__(separateur=DocumentPDF.SAUT_LIGNE)
+        self.inserer(self.OUVERTURE_TRAILER)
+        self.inserer(DictionnaireFermeture(taille_table, reference_catalogue))
+        self.inserer(self.OUVERTURE_STARTXREF)
+        self.inserer(position_table)
+        self.inserer(self.FERMETURE_FICHIER)
+
+
+class DictionnaireFermeture(DictionnairePDF):
+    """Le dictionnaire de fermeture du document PDF.
+
+    Clés obligatoires :
+    - Size = le nombre d'entrées dans la table des références du document PDF
+    - Root = une référence vers l'objet interne contenant le catalogue PDF
+
+    Exemple :
+
+        <<
+        /Size 88
+        /Root 6 0 R
+        ...
+        >>
+
+    """
+
+    def __init__(self, taille_table, reference_catalogue):
+        super().__init__()
+        self.inserer((NomPDF("Size"), taille_table))
+        self.inserer((NomPDF("Root"), reference_catalogue))

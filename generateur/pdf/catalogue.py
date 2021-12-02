@@ -2,24 +2,33 @@ from .nom import NomPDF
 from .dictionnaire import DictionnairePDF
 
 
-class CataloguePDF:
+class CataloguePDF(DictionnairePDF):
+    """Un catalogue PDF est un dictionnaire avec des clés obligatoires.
 
-    # Un catalogue PDF est un dictionnaire avec des clés obligatoires :
-    # - Type = Catalog
-    # - Pages = une référence vers la page racine du document
-    #
-    # Exemple :
-    #     <<
-    #     /Type /Catalog
-    #     /Pages 3 0 R
-    #     ...
-    #     >>
+    Clés obligatoires :
+    - Type = Catalog
+    - Pages = une référence vers la page racine du document
 
-    def __init__(self, reference_page_racine):
-        self.racine = reference_page_racine
+    Exemple :
 
-    def lire_octets(self):
-        dictionnaire = DictionnairePDF()
-        dictionnaire.ajouter(NomPDF("Type"), NomPDF("Catalog").lire_octets())
-        dictionnaire.ajouter(NomPDF("Pages"), self.racine.lire_octets())
-        return dictionnaire.lire_octets()
+        <<
+        /Type /Catalog
+        /Pages 3 0 R
+        ...
+        >>
+
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.inserer((NomPDF("Type"), NomPDF("Catalog")))
+        self.reference_page_racine = None
+
+    def definir_page_racine(self, reference_objet_pdf):
+        self.reference_page_racine = reference_objet_pdf
+        return self
+
+    def finaliser(self):
+        if self.reference_page_racine is not None:
+            self.inserer((NomPDF("Pages"), self.reference_page_racine))
+        return self

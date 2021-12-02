@@ -1,81 +1,80 @@
-from .assistant import en_octets
 from .nom import NomPDF
-from .reference import ReferenceObjetPDF
 from .liste import ListePDF
 from .dictionnaire import DictionnairePDF
 
 
-class PagePDF:
+class PagePDF(DictionnairePDF):
+    """Une page PDF est un dictionnaire avec des clés obligatoires.
 
-    # Une page PDF est un dictionnaire avec des clés obligatoires :
-    # - Type = Page
-    # - Parent = une référence sur l'objet parent (une page racine)
-    # - MediaBox = la définition des limites de la page
-    #
-    # Exemple :
-    #
-    #     <<
-    #     /Type /Page
-    #     /Parent 3 0 R
-    #     /MediaBox [0 0 595 842]
-    #     ...
-    #     >>
+    Clés obligatoires :
+    - Type = Page
+    - Parent = une référence sur l'objet parent (une page racine)
+    - MediaBox = la définition des limites de la page
+
+    Exemple :
+
+        <<
+        /Type /Page
+        /Parent 3 0 R
+        /MediaBox [0 0 595 842]
+        ...
+        >>
+
+    """
 
     LIMITES_A4 = (0, 0, 595, 842)
 
-    @staticmethod
-    def limites_en_octets(limites):
-        liste = ListePDF()
-        for valeur in limites:
-            liste.ajouter(en_octets(valeur))
-        return liste.lire_octets()
+    def __init__(self):
+        super().__init__()
+        self.inserer((NomPDF("Type"), NomPDF("Page")))
+        composant_liste_pdf_limites = ListePDF()
+        for valeur in self.LIMITES_A4:
+            composant_liste_pdf_limites.inserer(valeur)
+        self.inserer((NomPDF("MediaBox"), composant_liste_pdf_limites))
+        self.reference_page_parente = None
 
-    def __init__(self, reference_parent):
-        self.parent = reference_parent
+    def definir_page_parente(self, reference_objet_pdf):
+        self.reference_page_parente = reference_objet_pdf
+        return self
 
-    def lire_octets(self):
-        limites = self.limites_en_octets(self.LIMITES_A4)
-        dictionnaire = DictionnairePDF()
-        dictionnaire.ajouter(NomPDF("Type"), NomPDF("Page").lire_octets())
-        dictionnaire.ajouter(NomPDF("Parent"), self.parent.lire_octets())
-        dictionnaire.ajouter(NomPDF("MediaBox"), limites)
-        return dictionnaire.lire_octets()
+    def finaliser(self):
+        if self.reference_page_parente is not None:
+            self.inserer((NomPDF("Parent"), self.reference_page_parente))
+        return self
 
 
-class PageRacinePDF:
+class PageRacinePDF(DictionnairePDF):
+    """Une page racine PDF est un dictionnaire avec des clés obligatoires.
 
-    # Une page racine PDF est un dictionnaire avec des clés obligatoires :
-    # - Type = Pages
-    # - Kids = la liste des références vers les pages filles
-    # - Count = le nombre de pages filles
-    #
-    # Exemple :
-    #
-    #     <<
-    #     /Type /Pages
-    #     /Kids [4 0 R]  <== référence vers 1 page fille : l'objet n°4 version 0
-    #     /Count 1
-    #     ...
-    #     >>
+    Clés obligatoires :
+    - Type = Pages
+    - Kids = la liste des références vers les pages filles
+    - Count = le nombre de pages filles
 
-    @staticmethod
-    def pages_filles_en_octets(objets_pages_pdf):
-        liste = ListePDF()
-        for objet in objets_pages_pdf:
-            reference = ReferenceObjetPDF(objet.numero, objet.version)
-            liste.ajouter(reference.lire_octets())
-        return liste.lire_octets()
+    Exemple :
+
+        <<
+        /Type /Pages
+        /Kids [4 0 R]  <== référence vers 1 page fille : l'objet n°4 version 0
+        /Count 1
+        ...
+        >>
+
+    """
 
     def __init__(self):
-        self.pages = []
+        super().__init__()
+        self.inserer((NomPDF("Type"), NomPDF("Pages")))
+        self.liste_ref_pages_filles = []
 
-    def ajouter_page_fille(self, objet_page_pdf):
-        self.pages.append(objet_page_pdf)
+    def ajouter_page_fille(self, reference_objet_pdf):
+        self.liste_ref_pages_filles.append(reference_objet_pdf)
+        return self
 
-    def lire_octets(self):
-        pages_filles = self.pages_filles_en_octets(self.pages)
-        dictionnaire = DictionnairePDF()
-        dictionnaire.ajouter(NomPDF("Type"), NomPDF("Pages").lire_octets())
-        dictionnaire.ajouter(NomPDF("Kids"), pages_filles)
-        dictionnaire.ajouter(NomPDF("Count"), en_octets(len(self.pages)))
-        return dictionnaire.lire_octets()
+    def finaliser(self):
+        composant_liste_pdf_references = ListePDF()
+        for ref_page_fille in self.liste_ref_pages_filles:
+            composant_liste_pdf_references.inserer(ref_page_fille)
+        self.inserer((NomPDF("Kids"), composant_liste_pdf_references))
+        self.inserer((NomPDF("Count"), len(self.liste_ref_pages_filles)))
+        return self
