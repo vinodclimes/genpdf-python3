@@ -5,6 +5,7 @@ from generateur.pdf.objet import ObjetPDF
 from generateur.pdf.reference import ReferenceObjetPDF
 from generateur.pdf.catalogue import CataloguePDF
 from generateur.pdf.tableref import TableReferencesPDF
+from generateur.pdf.composant import ComposantPDF
 from generateur.pdf.fermeture import FermeturePDF
 
 
@@ -45,18 +46,22 @@ def construire_pdf_vide():
     positions_internes = document_pdf.lire_positions_internes()
     position_table = positions_internes[DocumentPDF.CLE_POSITION_FIN]
 
-    # Constuire et insérer une table des références sur les objets internes
+    # Insérer le dernier composant, pour la table des références + fermeture
+    fin_document = ComposantPDF(separateur=DocumentPDF.SAUT_LIGNE)
+    document_pdf.inserer(fin_document)
+
+    # Constuire et insérer une table des références vers les objets internes
     table = TableReferencesPDF()
     table.ajouter_entree(positions_internes[1])
     table.ajouter_entree(positions_internes[2])
     table.ajouter_entree(positions_internes[3])
     table.finaliser()
     taille_table = table.lire_nombre_entrees()
-    document_pdf.inserer(table)
+    fin_document.inserer(table)
 
     # Construire et insérer la séquence de fermeture
     fermeture = FermeturePDF(taille_table, position_table, ref_catalogue)
-    document_pdf.inserer(fermeture)
+    fin_document.inserer(fermeture)
 
     # Retourner le document complet
     return document_pdf
