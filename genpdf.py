@@ -13,7 +13,7 @@ from generateur.pdf.fermeture import FermeturePDF
 from generateur.pdf.texte import BlocTextePDF
 
 
-def construire_pdf_vide():
+def construire_pdf_test():
 
     # Ouvrir un document
     document_pdf = DocumentPDF()
@@ -101,7 +101,7 @@ def construire_pdf_vide():
 
 if __name__ == "__main__":
 
-    document_pdf = construire_pdf_vide()
+    document_pdf = construire_pdf_test()
     nom_fichier_pdf = "exemple.pdf"
 
     nombre_octets_ecrits = 0

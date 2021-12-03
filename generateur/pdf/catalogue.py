@@ -21,7 +21,7 @@ class CataloguePDF(DictionnairePDF):
 
     def __init__(self):
         super().__init__()
-        self.inserer((NomPDF("Type"), NomPDF("Catalog")))
+        self.inserer("Type", NomPDF("Catalog"))
         self.reference_page_racine = None
 
     def definir_page_racine(self, reference_objet_pdf):
@@ -30,5 +30,5 @@ class CataloguePDF(DictionnairePDF):
 
     def finaliser(self):
         if self.reference_page_racine is not None:
-            self.inserer((NomPDF("Pages"), self.reference_page_racine))
+            self.inserer("Pages", self.reference_page_racine)
         return self

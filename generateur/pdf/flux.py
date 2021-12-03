@@ -28,5 +28,5 @@ class FluxPDF(ComposantPDF):
 
     def finaliser(self):
         longueur = len(bytes(self.composant_flux))
-        self.composant_dictionnaire.inserer((NomPDF("Length"), longueur))
+        self.composant_dictionnaire.inserer("Length", longueur)
         return self

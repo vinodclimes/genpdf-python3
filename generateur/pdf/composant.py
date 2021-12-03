@@ -2,7 +2,7 @@ class ComposantPDF:
     """Un composant à intégrer dans la structure d'un document PDF.
 
     Le composant contient un ou plusieurs éléments internes.
-    On peut lui ajouter des éléments avec l'opérateur d'addition.
+    On peut lui ajouter des éléments avec la méthode 'inserer(element)'.
     Les éléments peuvent être des composants, du texte, des nombres, etc.
 
     La représentation binaire s'obtient par un appel à bytes().

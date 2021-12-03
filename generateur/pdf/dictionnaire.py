@@ -1,5 +1,6 @@
 from .composant import ComposantPDF
 from .document import DocumentPDF
+from .nom import NomPDF
 
 
 class DictionnairePDF(ComposantPDF):
@@ -40,10 +41,9 @@ class DictionnairePDF(ComposantPDF):
         super().inserer(self.composant_interne_sequence)
         super().inserer(self.FERMETURE)
 
-    def inserer(self, paire_cle_valeur):
-        (cle, valeur) = paire_cle_valeur
+    def inserer(self, cle, valeur):
         composant_interne_cle_valeur = (
             ComposantPDF(separateur=self.SEPARATEUR_CLE_VALEUR))
-        composant_interne_cle_valeur.inserer(cle)
+        composant_interne_cle_valeur.inserer(NomPDF(cle))
         composant_interne_cle_valeur.inserer(valeur)
         self.composant_interne_sequence.inserer(composant_interne_cle_valeur)

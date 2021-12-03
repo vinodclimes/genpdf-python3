@@ -11,7 +11,7 @@ class BlocTextePDF(ComposantPDF):
     ou encore pour écrire une séquence de codes (caractères Latin1).
     """
 
-    SEPARATEUR = b" "
+    SEPARATEUR_COMMANDE = b" "
     OUVERTURE = "BT"
     FERMETURE = "ET"
     OUVERTURE_CODES = "("
@@ -26,7 +26,7 @@ class BlocTextePDF(ComposantPDF):
 
     RESERVATION = (len(OUVERTURE_CODES)
                    + len(FERMETURE_CODES)
-                   + len(SEPARATEUR)
+                   + len(SEPARATEUR_COMMANDE)
                    + len(OPERATEUR_CODES)
                    + len(DocumentPDF.SAUT_LIGNE))
 
@@ -79,13 +79,13 @@ class BlocTextePDF(ComposantPDF):
                 super().inserer(ligne)
 
     def construire_composant_position(self):
-        composant = ComposantPDF(separateur=self.SEPARATEUR)
+        composant = ComposantPDF(separateur=self.SEPARATEUR_COMMANDE)
         composant.inserer(self.position)
         composant.inserer(self.OPERATEUR_POSITION)
         return composant
 
     def construire_composant_police(self):
-        composant = ComposantPDF(separateur=self.SEPARATEUR)
+        composant = ComposantPDF(separateur=self.SEPARATEUR_COMMANDE)
         composant.inserer(NomPDF(self.police.nom_interne))
         composant.inserer(self.police.taille)
         composant.inserer(self.OPERATEUR_POLICE)
@@ -96,7 +96,7 @@ class BlocTextePDF(ComposantPDF):
         composant_codes.inserer(self.OUVERTURE_CODES)
         composant_codes.inserer(codes)
         composant_codes.inserer(self.FERMETURE_CODES)
-        composant_operation = ComposantPDF(separateur=self.SEPARATEUR)
+        composant_operation = ComposantPDF(separateur=self.SEPARATEUR_COMMANDE)
         composant_operation.inserer(composant_codes)
         composant_operation.inserer(self.OPERATEUR_CODES)
         return composant_operation

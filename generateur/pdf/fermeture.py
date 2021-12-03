@@ -56,5 +56,5 @@ class DictionnaireFermeture(DictionnairePDF):
 
     def __init__(self, taille_table, reference_catalogue):
         super().__init__()
-        self.inserer((NomPDF("Size"), taille_table))
-        self.inserer((NomPDF("Root"), reference_catalogue))
+        self.inserer("Size", taille_table)
+        self.inserer("Root", reference_catalogue)

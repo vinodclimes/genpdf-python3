@@ -35,7 +35,7 @@ class PolicePDF(DictionnairePDF):
         return self
 
     def finaliser(self):
-        self.inserer((NomPDF("Type"), NomPDF("Font")))
-        self.inserer((NomPDF("Subtype"), NomPDF("Type1")))
-        self.inserer((NomPDF("BaseFont"), NomPDF(self.nom_standard)))
+        self.inserer("Type", NomPDF("Font"))
+        self.inserer("Subtype", NomPDF("Type1"))
+        self.inserer("BaseFont", NomPDF(self.nom_standard))
         return self
