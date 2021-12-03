@@ -47,7 +47,8 @@ def construire_pdf_test():
     # Créer le contenu d'une page en tant qu'objet interne n°4
     position_texte = PositionPDF(25, 50)
     texte = BlocTextePDF(position_texte, police)
-    texte.inserer("Ceci est un document PDF de démonstration. ")
+    texte.inserer("Ceci est un document PDF de démonstration")
+    texte.inserer("composé de 2 lignes. ")
     contenu_page = ContenuPagePDF()
     contenu_page.inserer(texte)
     contenu_page.finaliser()

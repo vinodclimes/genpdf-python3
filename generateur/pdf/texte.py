@@ -19,8 +19,9 @@ class BlocTextePDF(ComposantPDF):
     OPERATION_SAUVEGARDE_CONTEXTE = "q"
     OPERATION_RESTAURATION_CONTEXTE = "Q"
     OPERATION_COULEUR_NOIRE = "0 0 0 rg"
-    OPERATEUR_POLICE = "Tf"
     OPERATEUR_POSITION = "Td"
+    OPERATEUR_POLICE = "Tf"
+    OPERATEUR_INTERLIGNE = "TL"
     OPERATEUR_CODES = "Tj"
     OPERATEUR_SAUT_LIGNE = "T*"
 
@@ -33,6 +34,7 @@ class BlocTextePDF(ComposantPDF):
     DISPONIBLE = DocumentPDF.LONGUEUR_MAX_LIGNE - RESERVATION
 
     CARACTERES_A_ECHAPPER = "()\\"
+    VALEUR_INTERLIGNE = 1.25
 
     @classmethod
     def ajouter_code(cls, code_unicode, codes, sequences_codes):
@@ -91,6 +93,12 @@ class BlocTextePDF(ComposantPDF):
         composant.inserer(self.OPERATEUR_POLICE)
         return composant
 
+    def construire_composant_interligne(self):
+        composant = ComposantPDF(separateur=self.SEPARATEUR_COMMANDE)
+        composant.inserer(self.VALEUR_INTERLIGNE * self.police.taille)
+        composant.inserer(self.OPERATEUR_INTERLIGNE)
+        return composant
+
     def construire_composant_codes(self, codes):
         composant_codes = ComposantPDF()
         composant_codes.inserer(self.OUVERTURE_CODES)
@@ -108,6 +116,7 @@ class BlocTextePDF(ComposantPDF):
         composant_rendu.inserer(self.OUVERTURE)
         composant_rendu.inserer(self.construire_composant_position())
         composant_rendu.inserer(self.construire_composant_police())
+        composant_rendu.inserer(self.construire_composant_interligne())
         for ligne in self.elements:
             sequences_codes = self.decouper_ligne(ligne)
             for codes in sequences_codes:
