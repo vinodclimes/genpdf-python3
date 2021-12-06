@@ -1,6 +1,7 @@
 from .composant import ComposantPDF
 from .document import DocumentPDF
 from .nom import NomPDF
+from .encodage import EncodageWinAnsi
 
 
 class BlocTextePDF(ComposantPDF):
@@ -8,7 +9,7 @@ class BlocTextePDF(ComposantPDF):
 
     Les lignes de texte sont dessinées en utilisant des opérateurs PDF.
     Par exemple : un opérateur pour déclarer la police, la position,
-    ou encore pour écrire une séquence de codes (caractères Latin1).
+    ou encore pour écrire une séquence de codes.
     """
 
     SEPARATEUR_COMMANDE = b" "
@@ -37,23 +38,23 @@ class BlocTextePDF(ComposantPDF):
     VALEUR_INTERLIGNE = 1.25
 
     @classmethod
-    def ajouter_code(cls, code_unicode, codes, sequences_codes):
+    def ajouter_code(cls, code, codes, sequences_codes):
         if len(codes) < cls.DISPONIBLE:
-            codes += bytes([code_unicode])
+            codes += bytes([code])
         else:
             sequences_codes.append(codes)
-            codes = bytes([code_unicode])
+            codes = bytes([code])
         return codes
 
     @classmethod
-    def ajouter_code_echappement(cls, code_unicode, codes, sequences_codes):
+    def ajouter_code_echappement(cls, code, codes, sequences_codes):
         if len(codes) < cls.DISPONIBLE - 1:
             codes += b"\\"
-            codes += bytes([code_unicode])
+            codes += bytes([code])
         else:
             sequences_codes.append(codes)
             codes = b"\\"
-            codes += bytes([code_unicode])
+            codes += bytes([code])
         return codes
 
     @classmethod
@@ -62,13 +63,13 @@ class BlocTextePDF(ComposantPDF):
         codes = b""
         for caractere in ligne:
             code_unicode = ord(caractere)
-            if code_unicode < 256:  # Latin1
-                if caractere in cls.CARACTERES_A_ECHAPPER:
-                    codes = cls.ajouter_code_echappement(
-                        code_unicode, codes, sequences_codes)
-                else:
-                    codes = cls.ajouter_code(
-                        code_unicode, codes, sequences_codes)
+            code_windows_ansi = EncodageWinAnsi.convertir_unicode(code_unicode)
+            if caractere in cls.CARACTERES_A_ECHAPPER:
+                codes = cls.ajouter_code_echappement(
+                    code_windows_ansi, codes, sequences_codes)
+            else:
+                codes = cls.ajouter_code(
+                    code_windows_ansi, codes, sequences_codes)
         sequences_codes.append(codes)
         return sequences_codes
 

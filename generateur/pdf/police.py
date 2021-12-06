@@ -37,5 +37,6 @@ class PolicePDF(DictionnairePDF):
     def finaliser(self):
         self.inserer("Type", NomPDF("Font"))
         self.inserer("Subtype", NomPDF("Type1"))
+        self.inserer("Encoding", NomPDF("WinAnsiEncoding"))
         self.inserer("BaseFont", NomPDF(self.nom_standard))
         return self
