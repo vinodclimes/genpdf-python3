@@ -35,8 +35,8 @@ class PagePDF(DictionnairePDF):
             composant_liste_pdf_limites.inserer(DistancePDF(valeur))
         self.inserer("MediaBox", composant_liste_pdf_limites)
         self.reference_page_parente = None
-        self.police = None
-        self.reference_police = None
+        self.polices = []
+        self.references_polices = []
         self.reference_contenu = None
 
     def definir_page_parente(self, reference_objet_pdf):
@@ -44,8 +44,14 @@ class PagePDF(DictionnairePDF):
         return self
 
     def definir_police(self, police, reference_objet_pdf):
-        self.police = police
-        self.reference_police = reference_objet_pdf
+        existe = False
+        for p in self.polices:
+            if p.nom_interne == police.nom_interne:
+                existe = True
+                break
+        if not existe:
+            self.polices.append(police)
+            self.references_polices.append(reference_objet_pdf)
         return self
 
     def definir_contenu(self, reference_objet_pdf):
@@ -55,10 +61,12 @@ class PagePDF(DictionnairePDF):
     def finaliser(self):
         if self.reference_page_parente is not None:
             self.inserer("Parent", self.reference_page_parente)
-        if self.police is not None and self.reference_police is not None:
+        if len(self.polices) > 0:
             dictionnaire_polices = DictionnairePDF()
-            dictionnaire_polices.inserer(
-                self.police.nom_interne, self.reference_police)
+            for index_police in range(len(self.polices)):
+                police = self.polices[index_police]
+                reference = self.references_polices[index_police]
+                dictionnaire_polices.inserer(police.nom_interne, reference)
             dictionnaire_ressources = DictionnairePDF()
             dictionnaire_ressources.inserer("Font", dictionnaire_polices)
             self.inserer("Resources", dictionnaire_ressources)
