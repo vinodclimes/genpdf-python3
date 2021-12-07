@@ -16,8 +16,12 @@ from ..pdf.fermeture import FermeturePDF
 class GenerateurDocumentPDF:
     """Encapsule la logique de création d'une structure de document PDF. """
 
+    @classmethod
+    def generer_courrier(cls, courrier):
+        return cls.generer_document(courrier.document)
+
     @staticmethod
-    def generer(document):
+    def generer_document(document):
 
         # Ouvrir un document PDF.
         pdf_document = DocumentPDF()

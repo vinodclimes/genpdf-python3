@@ -35,7 +35,7 @@ class BlocTextePDF(ComposantPDF):
     DISPONIBLE = DocumentPDF.LONGUEUR_MAX_LIGNE - RESERVATION
 
     CARACTERES_A_ECHAPPER = "()\\"
-    VALEUR_INTERLIGNE = 1.25
+    VALEUR_INTERLIGNE = 1.2
 
     @classmethod
     def ajouter_code(cls, code, codes, sequences_codes):
@@ -96,7 +96,8 @@ class BlocTextePDF(ComposantPDF):
 
     def construire_composant_interligne(self):
         composant = ComposantPDF(separateur=self.SEPARATEUR_COMMANDE)
-        composant.inserer(self.VALEUR_INTERLIGNE * self.police.taille)
+        valeur_interligne = self.VALEUR_INTERLIGNE * self.police.taille
+        composant.inserer(f"{valeur_interligne:.1f}")
         composant.inserer(self.OPERATEUR_INTERLIGNE)
         return composant
 
