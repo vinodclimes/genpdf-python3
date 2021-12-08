@@ -139,5 +139,5 @@ class GenerateurDocumentPDF:
             taille_table, position_table, pdf_ref_catalogue)
         pdf_fin_document.inserer(pdf_fermeture)
 
-        # Retourner le document PDF complet sous sa forme binaire.
-        return bytes(pdf_document)
+        # Retourner la structure du document PDF complet.
+        return pdf_document
