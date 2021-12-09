@@ -1,3 +1,4 @@
+from .paragraphe import Paragraphe
 from ..document.courrier import Courrier
 
 
@@ -45,7 +46,7 @@ class Description:
     @classmethod
     def lire_cles_valeurs_fichier(cls, chemin_fichier):
         cles_valeurs = {}
-        cles_valeurs[cls.CLE_PARAGRAPHES] = [[]]
+        cles_valeurs[cls.CLE_PARAGRAPHES] = [Paragraphe()]
         cle_courante = cls.CLE_PARAGRAPHES
         with open(chemin_fichier,
                   encoding=cls.ENCODAGE_FICHIER, errors="strict") as fichier:
@@ -67,7 +68,7 @@ class Description:
                         if cle_courante == cls.CLE_PARAGRAPHES:
                             paragraphes = cles_valeurs[cls.CLE_PARAGRAPHES]
                             dernier_paragraphe = paragraphes[-1]
-                            dernier_paragraphe.append(ligne)
+                            dernier_paragraphe.ajouter_ligne(ligne)
                         else:
                             cles_valeurs[cle_courante].append(ligne)
 
@@ -77,8 +78,8 @@ class Description:
     @staticmethod
     def terminer_dernier_paragraphe(paragraphes):
         dernier_paragraphe = paragraphes[-1]
-        if len(dernier_paragraphe) > 0:
-            nouveau_paragraphe = []
+        if not dernier_paragraphe.est_vide():
+            nouveau_paragraphe = Paragraphe()
             paragraphes.append(nouveau_paragraphe)
 
     @classmethod
@@ -166,14 +167,17 @@ class DescriptionCourrier(Description):
 
         # Paragraphes successifs formant le corps du courrier.
         for paragraphe in self.cles_valeurs[self.CLE_PARAGRAPHES]:
-            if len(paragraphe) > 0:
-                courrier.ajouter_paragraphe(paragraphe)
+            if not paragraphe.est_vide():
+                paragraphe.reorganiser_lignes()
+                courrier.ajouter_paragraphe(paragraphe.lignes)
 
         # Formule de politesse (dernier paragraphe).
         if self.CLE_FORMULE_POLITESSE in self.cles_valeurs:
             lignes = self.cles_valeurs[self.CLE_FORMULE_POLITESSE]
-            if len(lignes) > 0:
-                courrier.ajouter_formule_politesse(lignes)
+            paragraphe = Paragraphe(lignes)
+            if not paragraphe.est_vide():
+                paragraphe.reorganiser_lignes()
+                courrier.ajouter_formule_politesse(paragraphe.lignes)
 
         # Nom du signataire.
         if self.CLE_NOM_SIGNATAIRE in self.cles_valeurs:
